@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Materna — full-stack pregnancy care platform. Architecture, features, demo, and engineering decisions." />
+  <title>Materna — Project Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Section navigation">
+    <a href="#hero" class="nav-brand">Materna</a>
+    <div class="nav-links">
+      <a href="#objective">Objective</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#features">Features</a>
+      <a href="#workflows">Workflows</a>
+      <a href="#demo">Demo</a>
+      <a href="#challenges">Challenges</a>
+      <a href="#analytics">Analytics</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <!-- 1. Hero -->
+    <section id="hero" class="hero">
+      <h1>Materna</h1>
+      <p class="lead">A full-stack pregnancy care platform connecting expectant mothers, partners, and doctors through one unified system.</p>
+      <p class="hero-tagline">Patient mobile app · Doctor web dashboard · REST API backend — designed for end-to-end health tracking, clinical review, and cost-aware intelligence.</p>
+      <div class="stack-chips">
+        <span class="chip"><strong>React Native</strong> 0.84</span>
+        <span class="chip"><strong>FastAPI</strong> Python 3.12</span>
+        <span class="chip"><strong>PostgreSQL</strong> 16</span>
+        <span class="chip"><strong>Vite</strong> + React 18</span>
+        <span class="chip"><strong>Docker</strong> Compose</span>
+        <span class="chip"><strong>Ollama</strong> optional LLM</span>
+      </div>
+    </section>
+
+    <!-- 2. Objective -->
+    <section id="objective">
+      <span class="section-label">01 · Objective</span>
+      <h2>Why Materna exists</h2>
+
+      <div class="problem-solution">
+        <div class="ps-block">
+          <h3>Problem</h3>
+          <p>Pregnancy health data is scattered — vitals in one app, appointments elsewhere, prescriptions in PDFs. Doctors lack a single longitudinal view between visits.</p>
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="ps-block">
+          <h3>Solution</h3>
+          <p>One platform: mothers track daily health on mobile, partners stay informed, doctors review trends and records in a dedicated dashboard — all backed by a secure API.</p>
+        </div>
+      </div>
+
+      <div class="objective-grid">
+        <article class="objective-card">
+          <div class="icon" aria-hidden="true">🤰</div>
+          <h3>Patient</h3>
+          <p>Track vitals, symptoms, hydration, nutrition, appointments, and medical records with guided pregnancy timeline content.</p>
+        </article>
+        <article class="objective-card">
+          <div class="icon" aria-hidden="true">👥</div>
+          <h3>Partner</h3>
+          <p>Join via invite code, receive shared insights and notifications to support the pregnancy journey.</p>
+        </article>
+        <article class="objective-card">
+          <div class="icon" aria-hidden="true">🩺</div>
+          <h3>Doctor</h3>
+          <p>Approve appointments, review weekly summaries, trend charts, medical vault, and exportable clinical reports.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. Architecture -->
+    <section id="architecture">
+      <span class="section-label">02 · Architecture</span>
+      <h2>How the system is built</h2>
+      <p class="lead">Three client surfaces talk to one FastAPI backend. JWT secures every request. PostgreSQL persists all health data. AI is optional — never a hard dependency.</p>
+
+      <div class="arch-diagram" role="img" aria-label="System architecture diagram">
+        <div class="arch-flow-label">Clients</div>
+        <div class="arch-row">
+          <div class="arch-node primary" data-node="mobile">
+            <div class="label">React Native App</div>
+            <div class="sub">Android & iOS · Redux · JWT</div>
+          </div>
+          <div class="arch-connector">↔</div>
+          <div class="arch-node primary" data-node="dashboard">
+            <div class="label">Doctor Dashboard</div>
+            <div class="sub">Vite + React · localStorage JWT</div>
+          </div>
+        </div>
+
+        <div class="arch-flow-label">HTTPS JSON · Bearer token</div>
+        <div class="arch-row">
+          <div class="arch-node primary pulse" data-node="api">
+            <div class="label">FastAPI</div>
+            <div class="sub">21 routers · SQLAlchemy 2 · Pydantic v2</div>
+          </div>
+        </div>
+
+        <div class="arch-flow-label">Persistence & services</div>
+        <div class="arch-row">
+          <div class="arch-node" data-node="db">
+            <div class="label">PostgreSQL 16</div>
+            <div class="sub">Users · vitals · records · appointments</div>
+          </div>
+          <div class="arch-connector">·</div>
+          <div class="arch-node optional" data-node="llm">
+            <div class="label">Ollama LLM</div>
+            <div class="sub">Weekly summaries · PDF insights</div>
+          </div>
+          <div class="arch-connector">·</div>
+          <div class="arch-node optional" data-node="push">
+            <div class="label">FCM / APNs</div>
+            <div class="sub">Optional push notifications</div>
+          </div>
+        </div>
+
+        <div class="arch-flow-label">External integrations</div>
+        <div class="arch-row">
+          <div class="arch-node optional">
+            <div class="label">Google Fit REST</div>
+            <div class="sub">Steps · HR · sleep · weight</div>
+          </div>
+          <div class="arch-node optional">
+            <div class="label">Open-Meteo</div>
+            <div class="sub">Heat-aware hydration · no API key</div>
+          </div>
+        </div>
+
+        <div class="arch-legend">
+          <span class="legend-solid">Core path</span>
+          <span class="legend-dashed">Optional / external</span>
+        </div>
+      </div>
+
+      <p class="arch-ref-note">
+        <strong>Shipped stack vs early design:</strong> This page reflects the implemented repository (Docker Compose, FastAPI, Vite dashboard, local Ollama). An earlier concept diagram explored Azure and TensorFlow — the production demo runs on the stack above.
+        <br />
+        <img src="assets/architecture-ref.jpeg" alt="Early design vision diagram (reference only)" class="arch-ref-thumb" width="200" loading="lazy" />
+      </p>
+    </section>
+
+    <!-- 4. Features -->
+    <section id="features">
+      <span class="section-label">03 · Features</span>
+      <h2>What the platform delivers</h2>
+
+      <div class="features-grid">
+        <article class="feature-item">
+          <h3>Health analytics</h3>
+          <p>Vitals, Google Fit sync, weekly LLM or deterministic summaries, gestational-week trend charts.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Appointments</h3>
+          <p>Patient requests slot → doctor approves in dashboard → notification to patient.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Medical vault & AI</h3>
+          <p>PDF upload, prescription extraction, plain-language summaries for patient and doctor.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Smart nutrition</h3>
+          <p>Rule-based daily meal plans adjusted for trimester, BP, and hydration — zero LLM cost.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Heat hydration</h3>
+          <p>Geolocation + weather → heat severity score → personalized hydration reminders.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Partner connect</h3>
+          <p>Invite codes, shared vitals insights, partner-specific notifications.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Pregnancy tools</h3>
+          <p>Kick counter, contraction timer, hospital bag checklist, medicine refill alerts.</p>
+        </article>
+        <article class="feature-item">
+          <h3>Doctor workspace</h3>
+          <p>Summary, trends, vault, and shareable report — four tabs per patient.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5. Workflows -->
+    <section id="workflows">
+      <span class="section-label">04 · Workflows</span>
+      <h2>Key user journeys</h2>
+
+      <div class="workflow-tabs" role="tablist">
+        <button class="tab-btn active" role="tab" aria-selected="true" data-tab="health">Daily health loop</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="appointment">Appointment flow</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="pdf">PDF → AI insight</button>
+      </div>
+
+      <div id="panel-health" class="tab-panel active" role="tabpanel">
+        <ol class="workflow-steps">
+          <li>
+            <strong>Home dashboard</strong>
+            <span>Gestational week, heat alert, hydration widget, and daily trimester tips load from pregnancy profile.</span>
+          </li>
+          <li>
+            <strong>Log vitals & sync wearables</strong>
+            <span>Manual entry or Google Fit REST sync → POST /health-metrics/sync → daily vital_entries in Postgres.</span>
+          </li>
+          <li>
+            <strong>Daily symptom survey</strong>
+            <span>Six symptoms with severity scoring; flags attention when severity ≥3 or day-over-day spike.</span>
+          </li>
+          <li>
+            <strong>Weekly summary</strong>
+            <span>14-day baseline vs current week stats → Ollama narrative or deterministic fallback, cached in DB.</span>
+          </li>
+        </ol>
+      </div>
+
+      <div id="panel-appointment" class="tab-panel" role="tabpanel">
+        <ol class="workflow-steps">
+          <li>
+            <strong>Patient picks doctor & slot</strong>
+            <span>GET /doctors/{id}/slots → POST /appointments with status <code>requested</code>.</span>
+          </li>
+          <li>
+            <strong>Doctor reviews queue</strong>
+            <span>Dashboard shows pending requests; doctor approves or declines.</span>
+          </li>
+          <li>
+            <strong>Status update + notify</strong>
+            <span>Appointment becomes <code>scheduled</code> or <code>cancelled</code>; in-app notification + optional push.</span>
+          </li>
+          <li>
+            <strong>Reminder on visit day</strong>
+            <span>Mobile polls notifications every 90s and surfaces day-before reminders.</span>
+          </li>
+        </ol>
+      </div>
+
+      <div id="panel-pdf" class="tab-panel" role="tabpanel">
+        <ol class="workflow-steps">
+          <li>
+            <strong>Upload medical PDF</strong>
+            <span>Multipart POST /records/upload → file stored in Docker volume, record row created.</span>
+          </li>
+          <li>
+            <strong>Extract & analyze</strong>
+            <span>pypdf text extraction → LLM JSON analysis with regex/deterministic fallback.</span>
+          </li>
+          <li>
+            <strong>Patient views summary</strong>
+            <span>Plain-language medicines, hemoglobin, glucose on Prescription Summary screen.</span>
+          </li>
+          <li>
+            <strong>Doctor clinical review</strong>
+            <span>Vault preview + shareable report in four-tab patient workspace.</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6. Demo -->
+    <section id="demo">
+      <span class="section-label">05 · Live demo</span>
+      <h2>See it in action</h2>
+      <p class="lead">Full walkthrough of the patient app — home dashboard, health analytics, Google Fit sync, and weekly summary.</p>
+
+      <div class="demo-layout">
+        <div class="demo-video-wrap">
+          <video
+            id="demoVideo"
+            controls
+            playsinline
+            preload="metadata"
+            poster="assets/home.jpeg"
+            aria-label="Materna app demonstration video"
+          >
+            <source src="assets/demo.mp4" type="video/mp4" />
+            Your browser does not support embedded video. Open <a href="assets/demo.mp4">demo.mp4</a> directly.
+          </video>
+        </div>
+        <div class="demo-screenshots">
+          <figure>
+            <img src="assets/home.jpeg" alt="Materna home screen — Week 23, heat alert, hydration" width="280" loading="lazy" />
+            <figcaption>Home — gestational progress & heat-aware hydration</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/analytics.jpeg" alt="Health analytics — Google Fit sync and weekly summary" width="280" loading="lazy" />
+            <figcaption>Analytics — vitals, Google Fit, weekly baseline comparison</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Challenges -->
+    <section id="challenges">
+      <span class="section-label">06 · Engineering challenges</span>
+      <h2>What went wrong — and how it was fixed</h2>
+
+      <div class="challenges-grid">
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>Heat alerts fired "high" at ~28°C because humidity alone triggered severity — false positives in moderate climates.</p>
+          <div class="fix">Fix</div>
+          <p>Rewrote scoring in <code>useHeatHydration.ts</code>: humidity only counts when temperature ≥30°C.</p>
+        </article>
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>Local Ollama sometimes failed JSON-mode responses or was unavailable during demos.</p>
+          <div class="fix">Fix</div>
+          <p>Dual-path in <code>weekly_summary_service</code> and <code>report_intelligence</code>: LLM first, deterministic regex fallback always.</p>
+        </article>
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>PDF multipart uploads broke when Axios set wrong Content-Type on FormData.</p>
+          <div class="fix">Fix</div>
+          <p>Custom interceptor clears Content-Type for FormData; 120s timeout with AbortController on mobile.</p>
+        </article>
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>React Native 0.84 dependency mismatches caused build failures on several native modules.</p>
+          <div class="fix">Fix</div>
+          <p>Seven <code>patch-package</code> patches for reanimated, screens, svg, push-notification, and related libs.</p>
+        </article>
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>Appointments went straight to scheduled with no doctor approval step.</p>
+          <div class="fix">Fix</div>
+          <p>Migration <code>010_appointment_requested_status.sql</code> adds <code>requested</code> status and dashboard approval UI.</p>
+        </article>
+        <article class="challenge-card">
+          <div class="wrong">Issue</div>
+          <p>Hydration logging failed silently when API was unreachable on poor network.</p>
+          <div class="fix">Fix</div>
+          <p>AsyncStorage optimistic UI — local intake preserved and synced when connection returns.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 8. Analytics & cost -->
+    <section id="analytics">
+      <span class="section-label">07 · Analytics & optimization</span>
+      <h2>Numbers that matter</h2>
+      <p class="lead">Cost-aware engineering: free APIs where possible, local LLM instead of paid inference, and caching to avoid redundant work.</p>
+
+      <div class="analytics-split">
+        <div class="analytics-block">
+          <h3>Cost cutting</h3>
+          <div class="analytics-grid">
+            <div class="stat-tile">
+              <div class="number">$0</div>
+              <div class="unit">nutrition AI</div>
+              <div class="desc">Rule-based meal plans — no LLM calls</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">$0</div>
+              <div class="unit">weather API</div>
+              <div class="desc">Open-Meteo + BigDataCloud — no keys</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">Local</div>
+              <div class="unit">Ollama</div>
+              <div class="desc">llama3.2 on host — not OpenAI per-token</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">10m</div>
+              <div class="unit">weather cache</div>
+              <div class="desc">Fewer geolocation + API round-trips</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">DB</div>
+              <div class="unit">summary cache</div>
+              <div class="desc">Weekly summaries stored — regenerate on fetch only</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">90s</div>
+              <div class="unit">poll interval</div>
+              <div class="desc">Notifications via poll — no WebSocket infra</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-block">
+          <h3>Sample health metrics (demo data)</h3>
+          <div class="sample-metrics">
+            <dl>
+              <dt>Heart rate</dt>
+              <dd>73.4 bpm avg <em>(baseline 74.0)</em></dd>
+              <dt>Sleep</dt>
+              <dd>6.94 h avg <em>(baseline 6.83)</em></dd>
+              <dt>Steps</dt>
+              <dd>4,508 avg <em>(baseline 4,965)</em></dd>
+              <dt>Weight</dt>
+              <dd>64.38 kg <em>(baseline 64.68)</em></dd>
+              <dt>Blood pressure</dt>
+              <dd>114.2 systolic avg</dd>
+              <dt>Google Fit</dt>
+              <dd>3,046 steps synced today</dd>
+            </dl>
+          </div>
+          <div class="analytics-grid" style="margin-top: 1rem;">
+            <div class="stat-tile">
+              <div class="number">21</div>
+              <div class="unit">API routers</div>
+              <div class="desc">Modular FastAPI surface</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">14</div>
+              <div class="unit">test files</div>
+              <div class="desc">Backend pytest coverage</div>
+            </div>
+            <div class="stat-tile">
+              <div class="number">3</div>
+              <div class="unit">surfaces</div>
+              <div class="desc">Mobile · dashboard · API</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Materna</strong> is a demo and educational project by the Thinkforge team.</p>
+    <p>It is not a substitute for professional medical advice. Always consult qualified healthcare providers for pregnancy-related decisions.</p>
+  </footer>
+
+  <script>
+    (function () {
+      // Scroll progress
+      const progressBar = document.getElementById("progressBar");
+      function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = pct + "%";
+      }
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+
+      // Section reveal on scroll
+      const sections = document.querySelectorAll("section");
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+      );
+      sections.forEach((s) => revealObserver.observe(s));
+
+      // Active nav link
+      const navLinks = document.querySelectorAll(".nav-links a");
+      const sectionIds = Array.from(navLinks).map((a) => a.getAttribute("href").slice(1));
+      const navObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const id = e.target.id;
+              navLinks.forEach((link) => {
+                link.classList.toggle("active", link.getAttribute("href") === "#" + id);
+              });
+            }
+          });
+        },
+        { threshold: 0.35, rootMargin: "-20% 0px -60% 0px" }
+      );
+      sectionIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) navObserver.observe(el);
+      });
+
+      // Workflow tabs
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const tabPanels = document.querySelectorAll(".tab-panel");
+      tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tab = btn.dataset.tab;
+          tabBtns.forEach((b) => {
+            b.classList.toggle("active", b === btn);
+            b.setAttribute("aria-selected", b === btn ? "true" : "false");
+          });
+          tabPanels.forEach((p) => {
+            p.classList.toggle("active", p.id === "panel-" + tab);
+          });
+        });
+      });
+
+      // Architecture node pulse (subtle)
+      const apiNode = document.querySelector('[data-node="api"]');
+      if (apiNode && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setInterval(() => {
+          apiNode.classList.toggle("pulse");
+        }, 2400);
+      }
+
+      // Keyboard section jump (1-7)
+      document.addEventListener("keydown", (e) => {
+        if (e.target.matches("input, textarea, video")) return;
+        const keys = ["1", "2", "3", "4", "5", "6", "7"];
+        const idx = keys.indexOf(e.key);
+        if (idx >= 0 && sectionIds[idx]) {
+          const target = document.getElementById(sectionIds[idx]);
+          if (target) target.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
